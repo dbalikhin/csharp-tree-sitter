@@ -6,11 +6,14 @@
 CFLAGS=/nologo /FC /Od /Z7 /Gy /diagnostics:column /Itree-sitter/lib/include
 LFLAGS=/def:$(@B).def /incremental:no /debug
 
-BIN=..\src\bin\debug\net7.0
+BIN=..\bin\debug\net7.0
 
 DLLS=\
 	$(BIN)/tree-sitter.dll \
 	$(BIN)/tree-sitter-cpp.dll \
+	$(BIN)/tree-sitter-c-sharp.dll \
+	
+
 
 all: dirs $(DLLS)
 
@@ -58,6 +61,19 @@ $(BIN)/tree-sitter-cpp-scanner.obj: tree-sitter-cpp/src/scanner.c
 $(BIN)/tree-sitter-cpp.dll: $(BIN)/tree-sitter-cpp-parser.obj $(BIN)/tree-sitter-cpp-scanner.obj
 	cl /LD $(CFLAGS) /Fe:$@ $** /link $(LFLAGS)
 
+########
+#
+#   C#
+#
+$(BIN)/tree-sitter-c-sharp-parser.obj: tree-sitter-c-sharp/src/parser.c
+	cl $(CFLAGS) /Fo:$@ /Itree-sitter-c-sharp/src/include /c $**
+
+$(BIN)/tree-sitter-c-sharp-scanner.obj: tree-sitter-c-sharp/src/scanner.c
+	cl $(CFLAGS) /Fo:$@ /Itree-sitter-c-sharp/src/include /c $**
+
+$(BIN)/tree-sitter-c-sharp.dll: $(BIN)/tree-sitter-c-sharp-parser.obj $(BIN)/tree-sitter-c-sharp-scanner.obj
+	cl /LD $(CFLAGS) /Fe:$@ $** /link $(LFLAGS)
+	
 ########
 #
 #	Clean
